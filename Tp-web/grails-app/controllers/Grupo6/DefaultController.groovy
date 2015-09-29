@@ -22,26 +22,23 @@ class DefaultController {
 	
 	def loguear(){
 		def messageError
-		usuario.nombre = params.nombre
-		usuario.clave = params.clave
 		
 		try {
-			RepoUsuarios.getInstance().chequearUsuario(usuario.nombre,usuario.clave)
+			
+			RepoUsuarios.getInstance().chequearUsuario(params.nombre, params.clave)
 			usuario = RepoUsuarios.getInstance().usuarioLogueado
-			redirect (action: "lista",
-					model: [usuario: usuario])
+			
+			redirect (action: "lista", model: [usuario: usuario])
 		} catch (RuntimeException e) {
 			messageError = "Datos incorrectos"
 		}
-			render(view:"index",
-				model:[usuario:usuario,messageError:messageError])
+			render(view:"index", model:[usuario:usuario,messageError:messageError])
 		
 	}
 	
 	def desloguear(){
 		def messageError
-		usuario.nombre = ""
-		usuario.clave = ""
+		usuario = new Usuario()
 		
 		
 			render(view:"index",
@@ -61,23 +58,28 @@ class DefaultController {
 	
 	def buscar()
 	{
-		def resultado
-		if (params.busqueda_con_filtros) {
-			resultado = RepositorioRecetas.getInstance.filtrarConFiltrosUsuario(usuario)
-		} else {
+		def resultado = null
 		def rep
 		rep = RepositorioRecetas.getInstance();
+		
+		
+		if (params.busqueda_con_filtros.equals("1") ) {
+			resultado = rep.filtrarConFiltrosUsuario(usuario)
+		} else {
 			resultado = rep.getRecetasVisiblesPor(usuario).toList()
 			resultado = rep.buscarPorNombreReceta(params.busqueda_nombre, resultado)
-//			resultado = rep.buscarPorCalorias(params.busqueda_caloria_minima, busqueda_caloria_minima, resultado)
-//			resultado = rep.buscarPorDificultad(params.busqueda_dificultad, resultado)
-//			resultado = rep.buscarPorTemporada(params.busqueda_temporada, resultado)
+			def minima = (params.busqueda_caloria_minima?params.busqueda_caloria_minima:0) as Integer
+			def maxima = (params.busqueda_caloria_maxima?params.busqueda_caloria_maxima:0) as Integer
+			resultado = rep.buscarPorCalorias(minima, maxima, resultado)
+			resultado = rep.buscarPorDificultad(params.busqueda_dificultad, resultado)
+			resultado = rep.buscarPorTemporada(params.busqueda_temporada, resultado)
 //			resultado = rep.buscarPorIngrediente(params.busqueda_ingrediente, resultado)
 		}
 		
 		
-		redirect (action: "lista",
-			model: [usuario: usuario,recetas:resultado])
+		render (view: "lista",
+			model: [usuario: usuario,recetas:resultado
+				])
 	}
 	
 	def getElegida(id){
@@ -87,7 +89,8 @@ class DefaultController {
 	def ver(int id)
 	{
 		recetaElegida = getElegida(id)
-		[usuario: usuario, receta:recetaElegida,es_favorita:checkFavorita()]
+		def condicionesPermitidas = recetaElegida.getCondicionesQueCumple()
+		[usuario: usuario, receta:recetaElegida, es_favorita:checkFavorita(), condicionesPermitidas: condicionesPermitidas]
 		
 		
 	}
