@@ -43,12 +43,12 @@ class RepositorioRecetas implements IFiltro {
 		if (nombreReceta == null) {
 			return resultado
 		} else {
-			return resultado.filter[receta|receta.nombre.contains(nombreReceta)].toList
+			return resultado.filter[receta|receta.nombre.toLowerCase.contains(nombreReceta.toLowerCase)].toList
 		}
 	}
 
 	def List<Receta> buscarPorCalorias(Integer minCal, Integer maxCal, List<Receta> resultado) {
-		if ((minCal == null) && (maxCal == null)) {
+		if ((minCal == null || minCal==0) || (maxCal == null || maxCal==0)) {
 			return resultado
 		} else {
 			return resultado.filter[receta|((receta.calorias > minCal) && (receta.calorias < maxCal))].toList
@@ -56,18 +56,19 @@ class RepositorioRecetas implements IFiltro {
 	}
 
 	def List<Receta> buscarPorDificultad(String dificultad, List<Receta> resultado) {
-		if (dificultad == null) {
+		if (dificultad == null || dificultad == "") {
 			return resultado
 		} else {
-			return resultado.filter[receta|receta.dificultad.equals(dificultad)].toList
+			return resultado.filter[receta|receta.dificultad.toLowerCase.contains(dificultad.toLowerCase)].toList
 		}
 	}
 
 	def List<Receta> buscarPorTemporada(String temporada, List<Receta> resultado) {
-		if (temporada == null) {
+		if (temporada == null || temporada === "") {
 			return resultado
 		} else {
-			return resultado.filter[receta|receta.temporada.equals(temporada)].toList
+			
+			return resultado.filter[receta|receta.temporada.toLowerCase.contains(temporada.toLowerCase)].toList
 
 		}
 	}

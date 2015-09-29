@@ -63,33 +63,51 @@
 
 						<div class="col-md-4">
 						<div class="row">
-							<p>Calor&iacute;as</p>
 							
 							<div class="col-lg-6">
 							<div class="row">
-							<label class="form-inline">M&iacute;nima</label> <input type="number" class="form-control"
+						<label for="busqueda_caloria_minima">
+							Calor&iacute;as
+						</label>
+						<div class="clearfix"></div>
+							<input type="number" class="form-control"
 								name="busqueda_caloria_minima" id="busqueda_caloria_minima" placeholder="Cantidad minima"
-								value="${busqueda_caloria_minima}">
+								value="${params.busqueda_caloria_minima}">
 								</div>
 								</div>
 							<div class="col-lg-6">
-							<label>M&aacute;xima</label> <input type="number" class="form-control"
-								name="busqueda_caloria_minima" id="busqueda_caloria_minima" placeholder="Cantidad maxima"
-								value="${busqueda_caloria_minima}">
+							<label>&nbsp;</label>
+							<div class="clearfix"></div>	
+							<input type="number" class="form-control"
+								name="busqueda_caloria_maxima" id="busqueda_caloria_maxima" placeholder="Cantidad maxima"
+								value="${params.busqueda_caloria_maxima}">
 							</div>	
 						</div>
 						</div>
 						<div class="col-md-6">
+						<br>
 							<label>Temporada</label> <input type="text" name="busqueda_temporada"
 								id="busqueda_temporada" class="form-control" placeholder="temporada"
-								value="${busqueda_temporada}">
+								value="${params.busqueda_temporada}">
 						</div>	
+						
+						<div class="col-md-6">
+						<br>
+						<div class="row">
+							<label>Dificultad</label> <input type="text" name="busqueda_dificultad"
+								id="busqueda_dificultad" class="form-control" placeholder="temporada"
+								value="${params.busqueda_dificultad}">
+								</div>
+						</div>	
+						
+						
 						<div class="col-md-6">
 							<br>
 							
 							<label>Filtros de usuario</label> <input type="checkbox" name="busqueda_con_filtros"
 								id="busqueda_con_filtros" class=""
-								value="${busqueda_con_filtros}">
+								${params.busqueda_con_filtros?'checked="checked"':''}
+								value="1">
 						</div>	
 
 						<div class="col-md-12">
@@ -104,7 +122,7 @@
 		</div>
 
 		<div class="panel panel-default">
-			<div class="panel-heading">Resultados</div>
+			<div class="panel-heading">${labelResultado }</div>
 			<div class="panel-body">
 
 				<table

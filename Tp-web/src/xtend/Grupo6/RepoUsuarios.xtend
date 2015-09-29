@@ -16,12 +16,11 @@ class RepoUsuarios {
 	static RepoUsuarios instance
 
 	new() {
-		this.usuariosDefault()
+		this.crearUsuariosDefault()
 	}
-	
-	def static RepoUsuarios getInstance(){
-		if(instance==(null))
-		{
+
+	def static RepoUsuarios getInstance() {
+		if (instance == (null)) {
 			instance = new RepoUsuarios()
 		}
 		instance
@@ -53,13 +52,13 @@ class RepoUsuarios {
 	}
 
 	def List<Usuario> list(Usuario usuarioEjemplo) {
-		usuariosAprobados.filter[  coincidenCondiciones(it, usuarioEjemplo.condicionesPreexistentes) ].toList
+		usuariosAprobados.filter[coincidenCondiciones(it, usuarioEjemplo.condicionesPreexistentes)].toList
 	}
-	
+
 	def boolean coincidenCondiciones(Usuario usuario, List<CondicionPreexistente> preexistentes) {
-		preexistentes.isEmpty() //|| usuario.condicionesPreexistentes.forall[ it.]  .stream().anyMatch(condicion -> preexistentes.contains(condicion));
+		preexistentes.isEmpty() // || usuario.condicionesPreexistentes.forall[ it.]  .stream().anyMatch(condicion -> preexistentes.contains(condicion));
 	}
-	
+
 //
 //	def List<Usuario> listPendinds(Usuario unUsuario) {
 //		usuariosPendientes.filter[coincidenCondiciones(it, usuarioEjemplo.condicionesPreexistentes)].toList
@@ -68,7 +67,6 @@ class RepoUsuarios {
 //	private boolean coincidenCondiciones(Usuario unUsuario, List<condicionesPreexistentes> condiciones) {
 //		return condiciones.isEmpty() || unUsuario.condicionesPreexistentes.stream().anyMatch(condicion -> condiciones.contains(condicion));
 //	}
-
 	def void approve(Usuario unUsuario) {
 		var usu = usuariosPendientes.findFirst[it.nombre == unUsuario.nombre]
 		if (usu != null) {
@@ -83,35 +81,32 @@ class RepoUsuarios {
 			usuariosPendientes.remove(usu)
 		}
 	}
-	
-	def usuariosDefault(){
-		val user1 = new Usuario(0,0)
+
+	def crearUsuariosDefault() {
+		val user1 = new Usuario(0, 0)
 		user1.nombre = "Clark Kent"
 		user1.clave = "cLark"
-		
-		val user2 = new Usuario(0,0)
+
+		val user2 = new Usuario(0, 0)
 		user2.nombre = "Lana Lang"
 		user2.clave = "lAna"
-		
-		val user3 = new Usuario(0,0)
+
+		val user3 = new Usuario(0, 0)
 		user3.nombre = "Lex Luthor"
 		user3.clave = "lEx"
-		
+
 		usuariosAprobados.add(user1)
 		usuariosAprobados.add(user2)
 		usuariosAprobados.add(user3)
 	}
-	
-	def chequearUsuario(String nombre, String clave){
-		
-		var res = usuariosAprobados.filter[u | u.nombre.equals(nombre) && u.clave.equals(clave)]
-		if (res.size>0)
-		{
+
+	def chequearUsuario(String nombre, String clave) {
+		var res = usuariosAprobados.filter[u|u.nombre.equals(nombre) && u.clave.equals(clave)]
+		if (res.size > 0) {
 			usuarioLogueado = res.get(0)
-		}else
-		{
+		} else {
 			throw new UserException("Datos incorrectos")
 		}
 	}
-	
+
 }

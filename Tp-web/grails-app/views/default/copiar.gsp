@@ -39,11 +39,18 @@
 						<div class="form-group">
 							<label for="nombre">Nuevo nombre</label>
 							<input type="text" class="form-control" name="nuevoNombre" id="nuevoNombre" 
-								placeholder="Nombre">
+								placeholder="Nombre" value="Copia de ${receta.nombre }">
 							<div class="clearfix"></div>
 						</div>
 						<g:actionSubmit controller="default" class="btn btn-success" 
 						action="procesarCopia" value="Copiar"/>
+						
+						<g:link class="btn btn-danger" action="lista">
+						<span class="glyphicon glyphicon-back"></span>
+								Volver sin copiar
+							</g:link>
+							
+							
 					</form>
 				</div>
 
