@@ -26,7 +26,7 @@ class RepositorioRecetas implements IFiltro {
 	new() {
 		recetas = new ArrayList<Receta>
 		recetas.add(getRecetaPrueba())
-		recetas.add(SharedTestComponents.getBifeConPure)
+//		recetas.add(SharedTestComponents.getBifeConPure)
 		buscador = new Buscador
 
 	}
@@ -67,7 +67,6 @@ class RepositorioRecetas implements IFiltro {
 		if (temporada == null || temporada === "") {
 			return resultado
 		} else {
-			
 			return resultado.filter[receta|receta.temporada.toLowerCase.contains(temporada.toLowerCase)].toList
 
 		}
@@ -125,6 +124,10 @@ class RepositorioRecetas implements IFiltro {
 		unaReceta.pasos.add("paso2")
 		unaReceta.pasos.add("paso3")
 		unaReceta
+	}
+	
+	def Receta getById(int id){
+		recetas.findFirst[r | r.id.equals(id) && r.puedeVerme(RepoUsuarios.getInstance.usuarioLogueado)]
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.uqbar.commons.utils.Observable
 import org.uqbar.commons.model.UserException
+import Tests.SharedTestComponents
 
 @Accessors
 @Observable
@@ -83,27 +84,56 @@ class RepoUsuarios {
 	}
 
 	def crearUsuariosDefault() {
+		val repo = RepositorioRecetas.getInstance()
+		var recetaPublica1 = SharedTestComponents.getBifeConPure()
+		println("crearUsuariosDefault")
 		val user1 = new Usuario(0, 0)
 		user1.nombre = "Clark Kent"
 		user1.clave = "cLark"
+		user1.agregarAFavoritas(recetaPublica1)
+		repo.recetas.add(recetaPublica1)
 
 		val user2 = new Usuario(0, 0)
 		user2.nombre = "Lana Lang"
 		user2.clave = "lAna"
 
-		val user3 = new Usuario(0, 0)
+		val user3 = SharedTestComponents.getUsuarioConSobrepeso
+		user3.filtros.add(new FiltroStrategyPorSobrePeso)
 		user3.nombre = "Lex Luthor"
 		user3.clave = "lEx"
 
 		usuariosAprobados.add(user1)
 		usuariosAprobados.add(user2)
 		usuariosAprobados.add(user3)
+		
+		//DATOS PARA PRUEBAS//
+		val recetaAux = new Receta()
+		recetaAux.setAcceso(new RecetaAccesoPrivado(user1))
+		recetaAux.nombre = "Receta privada Clark"
+		recetaAux.calorias = 9200
+		recetaAux.dificultad = "Media"
+		recetaAux.temporada = "Primavera"
+		repo.recetas.add(recetaAux)
+
+		var miGrupo = new Grupo()
+		miGrupo.nombre = "Grupo Copado"
+		miGrupo.agregarUsuario(user1)
+		miGrupo.agregarUsuario(user2)
+
+		val recetaDeOtro = new Receta()
+		recetaDeOtro.setAcceso(new RecetaAccesoPrivado(user2))
+		recetaDeOtro.nombre = "Receta privada Lana"
+		recetaDeOtro.calorias = 1200
+		recetaDeOtro.dificultad = "Baja"
+		recetaDeOtro.temporada = "Verano"
+
+		repo.recetas.add(recetaDeOtro)
 	}
 
 	def chequearUsuario(String nombre, String clave) {
-		var res = usuariosAprobados.filter[u|u.nombre.equals(nombre) && u.clave.equals(clave)]
-		if (res.size > 0) {
-			usuarioLogueado = res.get(0)
+		var res = usuariosAprobados.findFirst[u|u.nombre.equals(nombre) && u.clave.equals(clave)]
+		if (res !== null) {
+			usuarioLogueado = res
 		} else {
 			throw new UserException("Datos incorrectos")
 		}

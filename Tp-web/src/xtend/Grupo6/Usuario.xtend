@@ -23,23 +23,32 @@ class Usuario implements IAceptaSugerencias {
 	boolean guardarSiempreFavoritas
 	List<IFiltroStrategy> filtros
 	RutinaEjercicio rutinaDeEjercicio
+	List<Receta> ultimasRecetasConsultadas
 	
 	new(){
+		init()
 		this.nombre = ""
 	}
 	
 	new(String nombre){
+		init()
 		this.nombre = nombre
 	}
 
 	new(double elPeso, double laAltura) {
+		init()
 		peso = elPeso
 		altura = laAltura
+	}
+	
+	def init(){
+		nombre = ""
 		fechaDeNacimiento = new Date()
 		preferencias = new ArrayList<String>()
 		comidasQueNoGustan = new ArrayList<String>()
 		condicionesPreexistentes = new ArrayList<CondicionPreexistente>()
 		recetasFavoritas = new ArrayList<Receta>()
+		ultimasRecetasConsultadas = new ArrayList<Receta>()		
 		grupos = new ArrayList<Grupo>()
 		guardarSiempreFavoritas = false
 		filtros = new ArrayList<IFiltroStrategy> 
@@ -105,13 +114,28 @@ class Usuario implements IAceptaSugerencias {
 
 		return ver && apta && gusta
 	}
+	
+	def boolean estaEnFavorita(Receta unaReceta){
+		val nombre1 = unaReceta.nombre
+		recetasFavoritas.exists[r | r.nombre.toLowerCase.contains(nombre1.toLowerCase)]
+	}
+	
+	def quitarDeMisFavoritas(Receta unaReceta){
+		val nombre1 = unaReceta.nombre
+		val encontrada = recetasFavoritas.findFirst[r|r.nombre.toLowerCase.contains(nombre1.toLowerCase)]
+		recetasFavoritas.remove(encontrada)
+	}
 
 	def void agregarAFavoritas(Receta unaReceta) {
-		if (!recetasFavoritas.contains(unaReceta))
+		if (!estaEnFavorita(unaReceta)){
+		println("agregando.." + unaReceta.nombre)	
 			recetasFavoritas.add(unaReceta)
-			else{
-				recetasFavoritas.remove(unaReceta)
+		}else{
+			println("quitando.." + unaReceta.nombre)
+				quitarDeMisFavoritas(unaReceta)
 			}
+		
+			
 	}
 	
 	override getTieneSobrepeso() {
@@ -129,6 +153,28 @@ class Usuario implements IAceptaSugerencias {
 		this.condicionesPreexistentes = unUsuario.condicionesPreexistentes
 		this.recetasFavoritas = unUsuario.recetasFavoritas
 		this.grupos = unUsuario.grupos
+	}
+	
+	def ultimaConsulta(Receta receta) {
+		ultimasRecetasConsultadas.add(receta)
+	}
+	
+//	para debuguear algunos datos
+	def void debug(){
+		
+		
+		println("todas las recetas son:")
+		RepositorioRecetas.getInstance.recetas.forEach[r|println(r.nombre + "--su id es " + r.id)]
+		println("")
+		println("")
+		
+		
+		
+		println("mis favoritas:")
+		recetasFavoritas.forEach[r|println(r.nombre + "--su id es " + r.id)]
+		println("fin favoritas")
+		println()	
+		
 	}
 
 }

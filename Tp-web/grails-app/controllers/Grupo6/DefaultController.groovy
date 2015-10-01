@@ -22,12 +22,11 @@ class DefaultController {
 	
 	def loguear(){
 		def messageError
-		
+		def repoUsuarios
+		repoUsuarios = RepoUsuarios.getInstance() 
 		try {
-			
-			RepoUsuarios.getInstance().chequearUsuario(params.nombre, params.clave)
+			repoUsuarios.chequearUsuario(params.nombre, params.clave)
 			usuario = RepoUsuarios.getInstance().usuarioLogueado
-			
 			redirect (action: "lista", model: [usuario: usuario])
 		} catch (RuntimeException e) {
 			messageError = "Datos incorrectos"
@@ -48,8 +47,23 @@ class DefaultController {
 	
 	def lista()
 	{
-		lista = RepositorioRecetas.getInstance().recetas
-		[usuario:usuario, recetas: lista]
+		def labelResultado
+		def resultado
+		resultado = new ArrayList<Receta>()
+		
+		if (usuario.recetasFavoritas.size > 0) {
+			println("listando favoritas..")
+			usuario.debug()
+			resultado.addAll(usuario.recetasFavoritas)
+			labelResultado = "Estas son tus recetas favoritas"
+		} else if (usuario.ultimasRecetasConsultadas.size > 0) {
+			labelResultado = "Estas son tus ultimas consultas"
+			resultado.addAll(usuario.ultimasRecetasConsultadas)
+		} else {
+			resultado = RepositorioRecetas.getInstance().getRecetasVisiblesPor(usuario).toList()
+			labelResultado = "Estas son las recetas Disponibles"
+		}
+		[usuario:usuario, recetas: resultado,labelResultado:labelResultado]
 	}
 	
 	def getRepo(){
@@ -60,8 +74,10 @@ class DefaultController {
 	{
 		def resultado = null
 		def rep
-		rep = RepositorioRecetas.getInstance();
+		def labelResultado
 		
+		rep = RepositorioRecetas.getInstance();
+		labelResultado = "Resultado de la busqueda"
 		
 		if (params.busqueda_con_filtros.equals("1") ) {
 			resultado = rep.filtrarConFiltrosUsuario(usuario)
@@ -74,16 +90,33 @@ class DefaultController {
 			resultado = rep.buscarPorDificultad(params.busqueda_dificultad, resultado)
 			resultado = rep.buscarPorTemporada(params.busqueda_temporada, resultado)
 //			resultado = rep.buscarPorIngrediente(params.busqueda_ingrediente, resultado)
+			usuario.ultimasRecetasConsultadas.addAll(resultado)
 		}
 		
 		
 		render (view: "lista",
-			model: [usuario: usuario,recetas:resultado
+			model: [usuario: usuario,recetas:resultado,labelResultado:labelResultado
 				])
 	}
 	
+	
+	def limpiar()
+	{
+		def resultado = new ArrayList<Receta>()
+		def labelResultado
+		
+		labelResultado = "Busqueda reseteado"
+		usuario.ultimasRecetasConsultadas.clear()
+		
+		render (view: "lista",
+			model: [usuario: usuario,recetas:resultado,labelResultado:labelResultado
+				])
+	}
+	
+	
+	
 	def getElegida(id){
-		return getRepo().recetas.get(id)
+		return getRepo().getById(id)
 	}
 	
 	def ver(int id)

@@ -8,6 +8,8 @@ import org.uqbar.commons.utils.Observable
 @Accessors
 @Observable
 class Receta implements IComponente {
+	static int creadas = 0
+	int id
 	String nombre
 	List<IComponente> ingredientes
 	List<String> pasos
@@ -19,19 +21,23 @@ class Receta implements IComponente {
 	List<CondicionPreexistente> condicionesPreexistentes
 	
 	new () {
-		ingredientes = new ArrayList<IComponente>()	
-		pasos = new ArrayList<String>()
-		condimentos = newArrayList
-		condicionesPreexistentes = newArrayList
+		init()
 	} 
 	
 	new(String nombre){
+		init()
 		this.nombre = nombre
+	}
+	
+	def init(){
+		Receta.creadas += 1
+		id = Receta.creadas
+		println("creando receta id=" + id)
 		ingredientes = new ArrayList<IComponente>()	
 		pasos = new ArrayList<String>()
 		condimentos = newArrayList
 		condicionesPreexistentes = newArrayList
-	}	
+	}
 	
  	override verSiTiene(Alimento unAlimento, double unaCantidad) {
 		val tiene = ingredientes.exists[it.verSiTiene(unAlimento, unaCantidad) ]

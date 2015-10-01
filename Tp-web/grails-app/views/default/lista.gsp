@@ -104,7 +104,7 @@
 						<div class="col-md-6">
 							<br>
 							
-							<label>Filtros de usuario</label> <input type="checkbox" name="busqueda_con_filtros"
+							<label for="busqueda_con_filtros">Filtros de usuario</label> <input type="checkbox" name="busqueda_con_filtros"
 								id="busqueda_con_filtros" class=""
 								${params.busqueda_con_filtros?'checked="checked"':''}
 								value="1">
@@ -115,6 +115,9 @@
 							<button type="submit" class="btn btn-primary">
 								<span class="glyphicon glyphicon-search"></span> Buscar
 							</button>
+							<g:link action="limpiar" class="btn btn-info">
+								Limpiar lista
+							</g:link>
 						</div>
 					</div>
 				</form>
@@ -137,7 +140,7 @@
 					<tbody>
 						<g:each in="${recetas}" status="i" var="recetaItem">
 							<tr class="${(i % 2) == 0 ? 'info' : ''}">
-								<td><g:link action="ver" id="${i}">
+								<td><g:link action="ver" id="${recetaItem.id}">
 										${recetaItem.nombre}
 									</g:link></td>
 								<td>
@@ -150,17 +153,17 @@
 									${recetaItem.dificultad}
 								</td>
 								<td>
-									<g:link class="btn btn-primary" action="ver" id="${i}">
+									<g:link class="btn btn-primary" action="ver" id="${recetaItem.id}">
 										<span class="glyphicon glyphicon-eye-open"></span>
 												Ver Receta
 									</g:link>
 									
-									<g:link class="btn btn-warning" action="hacerFavorita" id="${i}">
+									<g:link class="btn btn-warning" action="hacerFavorita" id="${recetaItem.id}">
 										<span class="glyphicon glyphicon-star"></span>
 												Favorita
 									</g:link>
 									
-									<g:link class="btn btn-success" action="copiar" id="${i}">
+									<g:link class="btn btn-success" action="copiar" id="${recetaItem.id}">
 										<span class="glyphicon glyphicon-duplicate"></span>
 												Copiar
 									</g:link>
