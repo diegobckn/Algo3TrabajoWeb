@@ -136,8 +136,10 @@ class DefaultController {
 		
 	}
 	
+	
 	def copiar(int id)
 	{
+		
 		recetaElegida = getElegida(id)
 		[receta:recetaElegida]
 	}
