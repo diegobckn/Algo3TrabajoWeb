@@ -23,39 +23,38 @@
 		</h1>
 	</div>
 	
+	
 	<div class="col-lg-3">
 	</div>
 	
 	<div class="col-lg-6">
 	
-
+			<g:if test="${messageError}">
+				<div class="alert alert-success">
+					${messageError}
+				</div>
+			</g:if>
+			
+			<div class="clearfix"></div>
 
 			<div class="panel panel-default">
-			<div class="panel-heading"><b>Copiar Receta</b></div>
+			<div class="panel-heading"><b>Panel de identificaci&oacute;n</b></div>
 
 				<div class="panel-body">
+				
+				<h5>
+				Logueado como
+				</h5>
+				<h4>
+				${usuario.nombre}
+				
+				</h4>
+				<div class="clearfix"></div>
 
-					<form method="POST">
-						<div class="form-group">
-							<h3>
-								<label>Receta: ${receta.nombre }</label>
-							</h3>
-							
-							<label for="nombre">Nuevo nombre</label>
-							<input type="text" class="form-control" name="nuevoNombre" id="nuevoNombre" 
-								placeholder="Nombre" value="Copia de ${receta.nombre }">
-							<div class="clearfix"></div>
-						</div>
-						<g:actionSubmit controller="default" class="btn btn-success" 
-						action="procesarCopia" value="Copiar"/>
-						
-						<g:link class="btn btn-danger" action="lista">
-						<span class="glyphicon glyphicon-back"></span>
-								Volver sin copiar
-							</g:link>
-							
-							
-					</form>
+					<g:link class="btn btn-danger" action="desloguear">
+										<span class="glyphicon glyphicon-log-out"></span>
+												Desloguear
+									</g:link>
 				</div>
 
 

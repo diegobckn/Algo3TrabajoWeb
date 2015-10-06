@@ -26,14 +26,10 @@
 	</head>
 	<body>
 	<div class="container">
-	<div class="col-lg-12 text-center">
-		<h1>
-		Bienvenido a
-			<span>
-			Que comemos hoy
-			</span> 
-		</h1>
-	</div>
+	
+	
+	<g:render template="/template/panelLogin" model="" /> 
+	<g:render template="/template/panelHeader" model="" />
 	
 	
 	<div class="col-lg-2">
@@ -159,7 +155,8 @@
 
 				</div>
 		</div>
-
+ 
+		<g:render template="/template/panelFooter" model="" />
 	</div>
 
 </body>
