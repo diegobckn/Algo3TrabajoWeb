@@ -127,7 +127,7 @@ class RepositorioRecetas implements IFiltro {
 	}
 	
 	def Receta getById(int id){
-		recetas.findFirst[r | r.id.equals(id) && r.puedeVerme(RepoUsuarios.getInstance.usuarioLogueado)]
+		recetas.findFirst[r | r.id.equals(id)]// && r.puedeVerme(RepoUsuarios.getInstance.usuarioLogueado)]
 	}
 
 }

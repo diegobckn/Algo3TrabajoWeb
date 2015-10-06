@@ -19,24 +19,7 @@
 <body>
 	<div class="container">
 
-		<div class="col-lg-3 pull-right panel-group" id="accordion1">
-			<div class="row">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<p>
-						Logueado como: ${usuario.nombre}
-						 
-						<g:link class="" action="desloguear">
-									Salir
-						</g:link>
-									
-									
-						</p>
-						
-					</div>
-				</div>
-			</div>
-		</div>
+		<g:render template="../template/panelLogin" model="" />
 
 		<div class="clearfix"></div>
 
@@ -135,11 +118,12 @@
 						<g:sortableColumn property="calorias" title="Calorias" />
 						<g:sortableColumn property="temporada"	title="Temporada recomendable" />
 						<g:sortableColumn property="dificultad"	title="Dificultad" />
-						<g:sortableColumn property="acciones"	title="acciones" />
+						<g:sortableColumn property="acciones"	title="Acciones" />
 					</thead>
 					<tbody>
 						<g:each in="${recetas}" status="i" var="recetaItem">
-							<tr class="${(i % 2) == 0 ? 'info' : ''}">
+							<tr class="${(i % 2) == 0 ? 'info-anulado' : ''}" style="background-color:${usuario.colorFondo(recetaItem)} !important;" 
+							title="creador: ${recetaItem.acceso.usuarioCarga.nombre}">
 								<td><g:link action="ver" id="${recetaItem.id}">
 										${recetaItem.nombre}
 									</g:link></td>
@@ -159,8 +143,14 @@
 									</g:link>
 									
 									<g:link class="btn btn-warning" action="hacerFavorita" id="${recetaItem.id}">
-										<span class="glyphicon glyphicon-star"></span>
-												Favorita
+										<g:if test="${usuario.estaEnFavorita(recetaItem)}">
+										<span class="glyphicon glyphicon-minus-sign" title="Quitar de favoritas"></span>
+										</g:if>
+										<g:else>
+										<span class="glyphicon glyphicon-plus-sign" title="Agregar a favoritas"></span>		
+										</g:else>
+										
+										Favorita
 									</g:link>
 									
 									<g:link class="btn btn-success" action="copiar" id="${recetaItem.id}">
@@ -175,12 +165,16 @@
 
 					</tbody>
 				</table>
+				
+				<g:link class="btn btn-info" controller="Principal" action="index">
+					<span class="glyphicon glyphicon-menu-left"></span>
+					Volver a principal
+				</g:link>
 
 			</div>
 		</div>
 
 
-	
 
 		</div>
 </body>

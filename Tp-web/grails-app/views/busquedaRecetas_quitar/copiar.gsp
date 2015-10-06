@@ -37,6 +37,10 @@
 
 					<form method="POST">
 						<div class="form-group">
+							<h3>
+								<label>Receta: ${receta.nombre }</label>
+							</h3>
+							
 							<label for="nombre">Nuevo nombre</label>
 							<input type="text" class="form-control" name="nuevoNombre" id="nuevoNombre" 
 								placeholder="Nombre" value="Copia de ${receta.nombre }">

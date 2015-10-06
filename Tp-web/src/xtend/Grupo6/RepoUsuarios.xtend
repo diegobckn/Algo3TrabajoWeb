@@ -86,7 +86,6 @@ class RepoUsuarios {
 	def crearUsuariosDefault() {
 		val repo = RepositorioRecetas.getInstance()
 		var recetaPublica1 = SharedTestComponents.getBifeConPure()
-		println("crearUsuariosDefault")
 		val user1 = new Usuario(0, 0)
 		user1.nombre = "Clark Kent"
 		user1.clave = "cLark"

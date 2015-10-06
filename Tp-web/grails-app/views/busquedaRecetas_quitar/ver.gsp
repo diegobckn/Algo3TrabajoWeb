@@ -95,7 +95,7 @@
 				
 				<div class="clearfix"></div><br>
 				
-				<input disabled class="disabled" id="es_favoita" type="checkbox" ${es_favorita?'checked':'' }/>
+				<input disabled class="disabled" id="es_favoita" type="checkbox" ${esFavorita?'checked':'' }/>
 				<p style="display:inline-block;">Favorita</p>
 
 					</div>

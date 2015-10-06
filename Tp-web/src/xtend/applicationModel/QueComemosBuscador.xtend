@@ -12,115 +12,108 @@ import java.util.List
 import Grupo6.RepoUsuarios
 import Grupo6.RecetaAccesoPrivado
 import Grupo6.Grupo
+import Grupo6.CondicionPreexistente
 
 @Accessors
 @Observable
 class QueComemosBuscador {
-	RepositorioRecetas repositorio
-	Receta recetaSeleccionada
-	Usuario usuarioLogIn
-	Integer calMin
-	Integer calMax
-	String nombre
-	String ingrediente
-	String dificultad
-	String temporada
+	Receta recetaElegida
+	Usuario usuarioLogueado
+	Integer busquedaCaloriasMinima
+	Integer busquedaCaloriasMaxima
+	String busquedaNombre
+	String busquedaIngrediente
+	String busquedaDificultad
+	String busquedaTemporada
 	List<Receta> resultado
-	boolean aceptarFiltro
-	static QueComemosBuscador instance = null
+	boolean busquedaConFiltros
+	String labelResultado
+	String nombreCopia	
 	
-	static  def QueComemosBuscador getInstance(){
-		if(instance == null)
-		{
-			instance = new QueComemosBuscador
-		}
-		instance
-	}
 	new() {
 	}
 	
-	def init(){
-		resultado = new ArrayList<Receta>
-
-		usuarioLogIn = RepoUsuarios.getInstance.usuarioLogueado
-		if (usuarioLogIn != null) {
-			usuarioLogIn.setAltura(120)
-			usuarioLogIn.setPeso(1.88)
-			usuarioLogIn.filtros.add(new FiltroStrategyPorSobrePeso)
-		}else{
-			usuarioLogIn = SharedTestComponents.getUsuarioConSobrepeso
-			usuarioLogIn.nombre = "usuario sin registrar"
-		}
-		repositorio = RepositorioRecetas.getInstance
-
-		val recetaAux = new Receta()
-		recetaAux.setAcceso(new RecetaAccesoPrivado(usuarioLogIn))
-		recetaAux.nombre = "Receta privada propia"
-		recetaAux.calorias = 9200
-		recetaAux.dificultad = "Media"
-		recetaAux.temporada = "Primavera"
-		repositorio.recetas.add(recetaAux)
-
-		val otroUsuarioDelGrupo = new Usuario(100, 1.80)
-		otroUsuarioDelGrupo.nombre = "Lana Lang"
-
-		var miGrupo = new Grupo()
-		miGrupo.nombre = "Grupo Copado"
-		miGrupo.agregarUsuario(otroUsuarioDelGrupo)
-		miGrupo.agregarUsuario(usuarioLogIn)
-
-		val recetaDeOtro = new Receta()
-		recetaDeOtro.setAcceso(new RecetaAccesoPrivado(otroUsuarioDelGrupo))
-		recetaDeOtro.nombre = "Receta privada de otro usuario de mi grupo"
-		recetaDeOtro.calorias = 1200
-		recetaDeOtro.dificultad = "Baja"
-		recetaDeOtro.temporada = "Verano"
-
-		repositorio.recetas.add(recetaDeOtro)
+	
+	
+	def repo(){
+		return RepositorioRecetas.getInstance()
 	}
 
-	def getDificultades() {
-		var aux = newArrayList
-		aux.add("Baja")
-		aux.add("Media")
-		aux.add("Alta")
-		aux
-	}
-
-	def getTemporadas() {
-		var aux = newArrayList
-		aux.add("Otoño")
-		aux.add("Invierno")
-		aux.add("Primavera")
-		aux.add("Verano")
-		aux.add("Todos los dias")
-		aux
-	}
-
-	def void agregarFavorita() {
-		usuarioLogIn.agregarAFavoritas(recetaSeleccionada)
-	}
-
-	def void search() {
-		if (aceptarFiltro.equals(true)) {
-			resultado = repositorio.filtrarConFiltrosUsuario(usuarioLogIn)
-		} else {
-			resultado = repositorio.getRecetasVisiblesPor(usuarioLogIn).toList
-			resultado = repositorio.buscarPorNombreReceta(nombre, resultado)
-			resultado = repositorio.buscarPorCalorias(calMin, calMax, resultado)
-			resultado = repositorio.buscarPorDificultad(dificultad, resultado)
-			resultado = repositorio.buscarPorTemporada(temporada, resultado)
-			resultado = repositorio.buscarPorIngrediente(ingrediente, resultado)
-		}
-	}
+	def void buscar()
+	{
+		 resultado = null
+		labelResultado = "Resultado de la busqueda"
 		
-	def void clear(){
-		resultado = newArrayList
-		nombre = null
-		calMin = null
-		calMax = null
-		dificultad = null
-		temporada = null
-		ingrediente = null
+			resultado = repo.getRecetasVisiblesPor(usuarioLogueado).toList()
+
+			if (busquedaConFiltros.equals("1") ) {
+				resultado = repo.filtrarConFiltrosUsuario(usuarioLogueado)
+			}
+		
+			resultado = repo.buscarPorNombreReceta(busquedaNombre, resultado)
+			var int minima = new Integer(busquedaCaloriasMinima)
+			var int maxima = new Integer(busquedaCaloriasMaxima)
+			resultado = repo.buscarPorCalorias(minima, maxima, resultado)
+			resultado = repo.buscarPorDificultad(busquedaDificultad, resultado)
+			resultado = repo.buscarPorTemporada(busquedaTemporada, resultado)
+//			resultado = rep.buscarPorIngrediente(params.busqueda_ingrediente, resultado)
+			usuarioLogueado.revizarConsulta(resultado)
+				
 	}
+	
+	def void lista()
+	{
+		resultado = new ArrayList<Receta>()
+		if (usuarioLogueado.recetasFavoritas.size > 0) {
+			resultado.addAll(usuarioLogueado.recetasFavoritas)
+			labelResultado = "Estas son tus recetas favoritas"
+		} else if (usuarioLogueado.ultimasRecetasConsultadas.size > 0) {
+			labelResultado = "Estas son tus ultimas consultas"
+			resultado.addAll(usuarioLogueado.ultimasRecetasConsultadas)
+		} else {
+			resultado = repo.getRecetasVisiblesPor(usuarioLogueado).toList()
+			labelResultado = "Estas son las recetas Disponibles"
+		}
+	}
+	
+	def List<CondicionPreexistente> condicionesPermitidas(int id){
+		seleccionarReceta(id)
+		return recetaElegida.getCondicionesQueCumple()
+	} 
+	
+	
+		
+	def limpiar()
+	{
+		resultado = new ArrayList<Receta>()
+		labelResultado = "Busqueda reseteada"
+		usuarioLogueado.ultimasRecetasConsultadas.clear()
+	}
+	
+	def getElegida(int id){
+		return repo.getById(id)
+	}
+	
+	
+	def seleccionarReceta(int id){
+		recetaElegida = getElegida(id)
+	}	
+	
+	def hacerCopia(int id){
+		seleccionarReceta(id)
+		var Receta copia = recetaElegida.getCopia(usuarioLogueado)
+		copia.nombre = nombreCopia
+		repo.recetas.add(copia)
+	}
+	
+	def boolean checkFavorita(int id){
+		seleccionarReceta(id)
+		return usuarioLogueado.recetasFavoritas.contains(recetaElegida)
+	}
+	
+	def void hacerFavorita(int id){
+		seleccionarReceta(id)
+		usuarioLogueado.agregarAFavoritas(recetaElegida)
+	}
+	
 }

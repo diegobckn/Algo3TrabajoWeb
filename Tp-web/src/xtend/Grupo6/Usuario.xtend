@@ -128,10 +128,8 @@ class Usuario implements IAceptaSugerencias {
 
 	def void agregarAFavoritas(Receta unaReceta) {
 		if (!estaEnFavorita(unaReceta)){
-		println("agregando.." + unaReceta.nombre)	
 			recetasFavoritas.add(unaReceta)
 		}else{
-			println("quitando.." + unaReceta.nombre)
 				quitarDeMisFavoritas(unaReceta)
 			}
 		
@@ -155,26 +153,41 @@ class Usuario implements IAceptaSugerencias {
 		this.grupos = unUsuario.grupos
 	}
 	
-	def ultimaConsulta(Receta receta) {
-		ultimasRecetasConsultadas.add(receta)
+	def agregarConsulta(Receta receta) {
+		if(!ultimasRecetasConsultadas.contains(receta))
+		{
+			ultimasRecetasConsultadas.add(receta)
+		}
+	}
+	
+	def void revizarConsulta(List<Receta> resultado){
+		resultado.forEach[agregarConsulta(it)]
 	}
 	
 //	para debuguear algunos datos
-	def void debug(){
+	def void debug(){}
+	
+	def colorFondo(Receta queReceta){
+		var color="#fff"
+		if(queReceta.acceso.usuarioCarga.equals(this))
+		{
+			color = "#66DADA"
+		}else{
+			if(grupos.exists
+				[
+					it.participantes.exists
+					[
+						p|
+						queReceta.acceso.usuarioCarga.nombre.equals(p.nombre)
+					]
+				]
+			 )
+			{
+				color = "#B4EC97"
+			}
+		}
 		
-		
-		println("todas las recetas son:")
-		RepositorioRecetas.getInstance.recetas.forEach[r|println(r.nombre + "--su id es " + r.id)]
-		println("")
-		println("")
-		
-		
-		
-		println("mis favoritas:")
-		recetasFavoritas.forEach[r|println(r.nombre + "--su id es " + r.id)]
-		println("fin favoritas")
-		println()	
-		
+		return color;
 	}
 
 }
